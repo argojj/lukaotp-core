@@ -1,0 +1,24 @@
+# Core-only public CI for argojj/lukaotp-core. No deploy, sign, publish, Node,
+# WASM, extension, or secret-dependent step is permitted.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Set up Rust
+        run: |
+          rustup update stable --no-self-update
+          rustup default stable
+      - name: Test core
+        run: cargo test -p lukaotp-core --locked
+      - name: Lint core
+        run: cargo clippy -p lukaotp-core --all-targets --locked -- -D warnings
